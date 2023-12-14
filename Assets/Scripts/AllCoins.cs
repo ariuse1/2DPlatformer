@@ -5,12 +5,10 @@ public class AllCoins : MonoBehaviour
 {
     [SerializeField] private Coin _coin;
     [SerializeField] private int _maxCountCoin;    
-    [SerializeField] private SpawnCoins _spawnPosition;
-    [SerializeField] private float _waitStartsecond;
+    [SerializeField] private SpawnAreas _spawnPosition;    
 
-    private Coin[] _coins;
-    private Coroutine _coroutineCreat = null;
-    private bool isAllCoins = false;
+    private Coin[] _coins;    
+    private bool _isAllCoins = false;
 
     private void Start()
     {
@@ -19,9 +17,9 @@ public class AllCoins : MonoBehaviour
 
     public void StartSpawn()
     {
-        if (isAllCoins)
+        if (_isAllCoins)
         {
-            isAllCoins = false;
+            _isAllCoins = false;
             StartCoroutine(Creat());
         }            
     }
@@ -29,23 +27,24 @@ public class AllCoins : MonoBehaviour
     private IEnumerator Creat()
     {
         float spawnSeconds = 5;        
-        WaitForSeconds _waitForSeconds = new(spawnSeconds);
+        WaitForSeconds waitTime = new(spawnSeconds);
 
-        while (isAllCoins == false)
+        while (_isAllCoins == false)
         {
-            yield return _waitForSeconds;
+            yield return waitTime;
 
-            _coins = gameObject.GetComponentsInChildren<Coin>();           
+            _coins = GetComponentsInChildren<Coin>();            
 
             if (_coins.Length < _maxCountCoin)
             {               
-                Vector2 position = _spawnPosition.GetSpawnPositionCoin();                
-                GameObject newObject = Instantiate(_coin.gameObject, position, Quaternion.identity);
-                newObject.transform.SetParent(gameObject.transform);
+                Vector2 position = _spawnPosition.GetSpawnPosition();                
+                Coin newCoin = Instantiate(_coin, position, Quaternion.identity);
+
+                newCoin.transform.SetParent(gameObject.transform);
             }
             else
             {
-                isAllCoins = true;
+                _isAllCoins = true;
                 break;
             }            
         }

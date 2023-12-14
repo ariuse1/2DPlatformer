@@ -1,45 +1,42 @@
 using UnityEngine;
 
-abstract public class Monster : MonoBehaviour
+ abstract public class Monster : MonoBehaviour
 {
-    [SerializeField] protected float speed;
-    [SerializeField] protected float jumpForce;
+    [SerializeField] private float _speed;
+    [SerializeField] private float _jumpForce;
       
-    protected Point[] movementPoints;    
-    protected SpriteRenderer spriteRenderer;
-    protected AnimationObject animationObject;
-    protected Animator animator;
-    protected StatesAnim state;
-    protected bool isGrounded = false;    
-    protected int direction;
-    protected int currentPoint;
-    protected int nextPoint;
-    protected int flipX;
+    private Point[] _movementPoints;
+    private AnimationObject _animationObject = new();
+    private StatesAnim _state;  
+    private int _direction;
+    private int _currentPoint;
+    private int _nextPoint;     
 
-    public Monster Spawn(Point[] pointsPath, int numberStartPosition)
+    public void SetStartParameters(Path path, int numberStartPosition, int direction)
     {
-        Transform transform = pointsPath[numberStartPosition].GetComponent<Transform>();
-        Monster monster = Instantiate(gameObject, transform.position, Quaternion.identity).GetComponent<Monster>();
-        monster.GetMotionParameters(pointsPath, numberStartPosition);
-
-        return monster;
+        _movementPoints = path.GetComponentsInChildren<Point>();
+        _currentPoint = numberStartPosition;
+        _direction = direction;
+        _nextPoint = GetNextPoint();  
     }
 
     protected void Move()
     {
         float positionYShift = 1;
         float accuracy = 0.7f;
-        state = StatesAnim.Idle;
-        Transform target = movementPoints[nextPoint].transform;
+
+        _state = StatesAnim.Idle;
+
+        Transform target = _movementPoints[_nextPoint].transform;
 
         if (Mathf.Abs(transform.position.x - target.position.x) < accuracy)
         {
-            currentPoint = nextPoint;
-            nextPoint = GetNextPoint();
-            target = movementPoints[nextPoint].transform;
+            _currentPoint = _nextPoint;
+            _nextPoint = GetNextPoint();
+            target = _movementPoints[_nextPoint].transform;
         }
 
-        spriteRenderer.flipX = flipX * (transform.position.x - target.position.x) < 0;        
+        GetComponentInChildren<SpriteRenderer>().flipX = (transform.position.x - target.position.x) < 0;        
 
         if (target.position.y - transform.position.y > positionYShift)
         {
@@ -47,52 +44,39 @@ abstract public class Monster : MonoBehaviour
         }            
         else
         {
-            transform.position = Vector2.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
-            state = StatesAnim.Run;
+            transform.position = Vector2.MoveTowards(transform.position, target.position, _speed * Time.deltaTime);
+            _state = StatesAnim.Run;
         }
-        
-        animationObject.Run(animator, state);
-    }
 
-    private void GetMotionParameters(Point[] pointsPath, int numberStartPosition)
-    {
-        movementPoints = pointsPath;
-        currentPoint = numberStartPosition;
-        direction = ChooseRandomDirection();
-        nextPoint = GetNextPoint();                
-        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-        animator = GetComponentInChildren<Animator>();
-        animationObject = GetComponent<AnimationObject>(); 
-    }
+        bool isGrounded = _animationObject.CheckGround(transform);
+
+        if (isGrounded == false)
+        {
+            _state = StatesAnim.Jump;
+        }
+
+        _animationObject.Run(GetComponentInChildren<Animator>(), _state);
+    }   
 
     private int GetNextPoint()
     {
-        int nextPointPath = currentPoint + direction;
+        int nextPointPath = _currentPoint + _direction;
 
-        if (nextPointPath < 0 || nextPointPath >= movementPoints.Length)
+        if (nextPointPath < 0 || nextPointPath >= _movementPoints.Length)
             DhangeDirection();
 
-        return currentPoint + direction;
+        return _currentPoint + _direction;
     }
 
     private void Jump(Transform target)
     {
-        transform.GetComponent<Rigidbody2D>().AddForce(Vector2.up * jumpForce,ForceMode2D.Force);
-        transform.position = Vector2.MoveTowards(transform.position, target.position, (speed + 5) * Time.deltaTime);
-    }
-
-    private int ChooseRandomDirection()
-    {
-        int countDirection = 2;
-
-        if (Random.Range(0, countDirection) == 0)
-            return 1;
-        else return -1;
+        transform.GetComponent<Rigidbody2D>().AddForce(Vector2.up * _jumpForce,ForceMode2D.Force);
+        transform.position = Vector2.MoveTowards(transform.position, target.position, (_speed + 5) * Time.deltaTime);
     }
 
     private void DhangeDirection()
     {
-        direction *= -1;
+        _direction *= -1;
     }
 }
 

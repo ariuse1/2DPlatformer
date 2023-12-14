@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEngine.RuleTile.TilingRuleOutput;
 
 public class AnimationObject : MonoBehaviour
 {
@@ -10,7 +9,7 @@ public class AnimationObject : MonoBehaviour
         animator.SetInteger(_state, (int)state);
     }
 
-    public bool CheckGround(UnityEngine.Transform transform)
+    public bool CheckGround(Transform transform)
     {       
         float radius = 0.3f;
 
@@ -18,8 +17,6 @@ public class AnimationObject : MonoBehaviour
         return coladers.Length > 1;
     }
 }
-
-
 
 public enum StatesAnim
 {
