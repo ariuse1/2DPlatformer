@@ -1,20 +1,25 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
+
 public class Hero : MonoBehaviour
 {
-    [SerializeField] private float _speed ;
-    [SerializeField] private float _jumpForce ;
+    [SerializeField] private float _speed;
+    [SerializeField] private float _jumpForce;
+
+    private const string StringHorizontal = "Horizontal";
+    private const string StringJump = "Jump";
 
     private Animator _animator;
     private AnimationObject _animationObject; 
       
     private bool _isGrounded = false;
-    private StatesAnim _stateAnim;
+    private StatesAnim _stateAnim;   
 
     private void Awake()
     {
         _animationObject = new();
-        _animator = GetComponent<Animator>();                     
+        _animator = GetComponent<Animator>();       
     }
 
     private void FixedUpdate()
@@ -26,12 +31,12 @@ public class Hero : MonoBehaviour
     {
         _stateAnim = StatesAnim.Idle;
 
-        if (Input.GetButton("Horizontal"))
+        if (Input.GetButton(StringHorizontal))
         {
             Run();
         }
 
-        if (_isGrounded && Input.GetButtonDown("Jump"))
+        if (_isGrounded && Input.GetButtonDown(StringJump))
         {
             Jump();
         }
@@ -46,7 +51,7 @@ public class Hero : MonoBehaviour
 
     private void Run()
     {        
-        Vector3 vector = transform.right * Input.GetAxisRaw("Horizontal");
+        Vector3 vector = transform.right * Input.GetAxisRaw(StringHorizontal);
 
         transform.position = Vector3.MoveTowards(transform.position, transform.position + vector, _speed * Time.deltaTime);
 
@@ -57,5 +62,5 @@ public class Hero : MonoBehaviour
     private void Jump()
     {
         transform.GetComponent<Rigidbody2D>().AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);        
-    }  
+    }    
 }

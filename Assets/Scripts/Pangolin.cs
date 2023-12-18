@@ -6,6 +6,7 @@ public class Pangolin : Monster
     {
         transform.rotation = Quaternion.Euler(0, 180, 0);
     }
+
     private void FixedUpdate()
     {           
         Move();

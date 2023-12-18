@@ -6,6 +6,7 @@ public class PointSpawnMonsters : MonoBehaviour
     [SerializeField] private Path[] _paths;
     [SerializeField] private Monster[] _monstersPrefab;
     [SerializeField] private int _countMonsters;
+
     private Monster[] _monsters;    
 
     public void Start()
