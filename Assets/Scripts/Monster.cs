@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
+
 abstract public class Monster : MonoBehaviour
 {
     [SerializeField] private float _speed;
