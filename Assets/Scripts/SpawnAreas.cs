@@ -4,7 +4,7 @@ public class SpawnAreas : MonoBehaviour
 {  
     private Area[] _areas;
     private int _numberArea;
-
+    
     private void Awake()
     {
         _areas = GetComponentsInChildren<Area>();

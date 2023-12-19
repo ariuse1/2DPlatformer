@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Rigidbody2D))]
 
 public class Hero : MonoBehaviour
 {
@@ -11,15 +12,18 @@ public class Hero : MonoBehaviour
     private const string StringJump = "Jump";
 
     private Animator _animator;
-    private AnimationObject _animationObject; 
-      
+    private AnimationObject _animationObject;
+    private Rigidbody2D _rigidbody2D;
+
     private bool _isGrounded = false;
-    private StatesAnim _stateAnim;   
+    private StatesAnim _stateAnim; 
+    
 
     private void Awake()
     {
         _animationObject = new();
-        _animator = GetComponent<Animator>();       
+        _animator = GetComponent<Animator>();
+        _rigidbody2D = GetComponent<Rigidbody2D>();
     }
 
     private void FixedUpdate()
@@ -61,6 +65,6 @@ public class Hero : MonoBehaviour
 
     private void Jump()
     {
-        transform.GetComponent<Rigidbody2D>().AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);        
+        _rigidbody2D.AddForce(Vector2.up * _jumpForce, ForceMode2D.Impulse);        
     }    
 }

@@ -1,6 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Rigidbody2D))]
 
 abstract public class Monster : MonoBehaviour
 {
@@ -9,10 +10,21 @@ abstract public class Monster : MonoBehaviour
       
     private Point[] _movementPoints;
     private AnimationObject _animationObject = new();
+    private Animator _animator;
+    private Rigidbody2D _rigidbody2D;
+    private SpriteRenderer _spriteRenderer;
+
     private StatesAnim _state;  
     private int _direction;
     private int _currentPoint;
-    private int _nextPoint;     
+    private int _nextPoint;
+
+    private void Awake()
+    {
+        _animator = GetComponent<Animator>();
+        _rigidbody2D = GetComponent<Rigidbody2D>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+    }
 
     public void SetStartParameters(Path path, int numberStartPosition, int direction)
     {
@@ -38,7 +50,7 @@ abstract public class Monster : MonoBehaviour
             target = _movementPoints[_nextPoint].transform;
         }
 
-        GetComponentInChildren<SpriteRenderer>().flipX = (transform.position.x - target.position.x) < 0;        
+        _spriteRenderer.flipX = (transform.position.x - target.position.x) < 0;        
 
         if (target.position.y - transform.position.y > positionYShift)
         {
@@ -57,7 +69,7 @@ abstract public class Monster : MonoBehaviour
             _state = StatesAnim.Jump;
         }
 
-        _animationObject.Run(GetComponentInChildren<Animator>(), _state);
+        _animationObject.Run(_animator, _state);
     }   
 
     private int GetNextPoint()
@@ -72,7 +84,7 @@ abstract public class Monster : MonoBehaviour
 
     private void Jump(Transform target)
     {
-        transform.GetComponent<Rigidbody2D>().AddForce(Vector2.up * _jumpForce,ForceMode2D.Force);
+        _rigidbody2D.AddForce(Vector2.up * _jumpForce,ForceMode2D.Force);
         transform.position = Vector2.MoveTowards(transform.position, target.position, (_speed + 5) * Time.deltaTime);
     }
 

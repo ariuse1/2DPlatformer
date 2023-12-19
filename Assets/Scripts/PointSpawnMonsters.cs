@@ -18,7 +18,7 @@ public class PointSpawnMonsters : MonoBehaviour
     {
         int _distanceBetweenObject = 1;
 
-        while (checkQuantity())
+        while (CheckQuantity())
         {
             Path selectPath = _paths[Random.Range(0, _paths.Length)];
             Monster selectMonster = _monstersPrefab[Random.Range(0, _monstersPrefab.Length)];
@@ -26,9 +26,11 @@ public class PointSpawnMonsters : MonoBehaviour
             Point[] points = selectPath.GetComponentsInChildren<Point>();
             int numbeSelectrPoint = Random.Range(0, points.Length);
 
-            if (_monsters.Any(monster => Mathf.Abs(monster.transform.position.x - points[numbeSelectrPoint].transform.position.x) <= _distanceBetweenObject) == false)
+            if (_monsters.Any(monster => Mathf.Abs(monster.transform.position.x - 
+                points[numbeSelectrPoint].transform.position.x) <= _distanceBetweenObject) == false)
             {
                 Monster monster = Instantiate(selectMonster, points[numbeSelectrPoint].transform.position, Quaternion.identity);
+               
                 monster.transform.SetParent(transform);
                 monster.SetStartParameters(selectPath, numbeSelectrPoint, ChooseRandomDirection());
             }                
@@ -44,7 +46,7 @@ public class PointSpawnMonsters : MonoBehaviour
         else return -1;
     }
 
-    private bool checkQuantity()
+    private bool CheckQuantity()
     {
         _monsters = GetComponentsInChildren<Monster>();
 

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public class AnimationObject : MonoBehaviour
-{   
+{
     public void Run(Animator animator, StatesAnim state)
     {
         int _state = Animator.StringToHash("State");
